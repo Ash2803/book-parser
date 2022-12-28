@@ -5,12 +5,23 @@ from pathlib import Path
 def download_book():
     book_dir_path = Path('books')
     book_dir_path.mkdir(parents=True, exist_ok=True)
-    for book_id in range(10):
-        url = f'https://tululu.org/txt.php?id={book_id}'
-        response = requests.get(url)
+    for book_id in range(11):
+        params = {
+            'id': book_id
+        }
+        response = requests.get('https://tululu.org/txt.php', params=params)
         response.raise_for_status()
-        with open(book_dir_path / f'Book_{book_id}.txt', 'wb') as file:
-            file.write(response.content)
+        try:
+            check_for_redirect(response)
+            with open(book_dir_path / f'Book_{book_id}.txt', 'wb') as file:
+                file.write(response.content)
+        except requests.HTTPError:
+            pass
+
+
+def check_for_redirect(response):
+    if response.history:
+        raise requests.HTTPError
 
 
 def main():
