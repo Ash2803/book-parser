@@ -1,5 +1,4 @@
 import os
-import traceback
 import urllib.parse
 from pathlib import Path
 
@@ -9,7 +8,7 @@ from pathvalidate import sanitize_filename
 from parse import parse_book_page, LinkNotFoundError, RedirectedPage
 
 
-def download_book_comments(url, genre, start_id, end_id):
+def download_book_comments(url: str, genre: str, start_id: int, end_id: int):
     """ Download books comments """
     images_dir_path = Path('comments')
     images_dir_path.mkdir(parents=True, exist_ok=True)
@@ -29,7 +28,7 @@ def download_book_comments(url, genre, start_id, end_id):
             continue
 
 
-def download_book_image(url, genre, start_id, end_id):
+def download_book_image(url: str, genre: str, start_id: int, end_id: int):
     """ Download books images """
     images_dir_path = Path('images')
     images_dir_path.mkdir(parents=True, exist_ok=True)
@@ -67,17 +66,8 @@ def download_book_txt(url: str, genre: str, start_id: int, end_id: int):
                 parsed_book_name = f'{sanitize_filename(book_page["book_title"])}.txt'
                 with open(book_dir_path / f'{book_id}. {parsed_book_name}', 'wb') as file:
                     file.write(response.content)
+                print(f'Название: {book_page["book_title"]}\nАвтор: {book_page["author"]}')
         except LinkNotFoundError:
             continue
         except RedirectedPage:
             continue
-
-
-def main():
-    genre = 'Биографии и мемуары'
-    url = 'https://tululu.org'
-    download_book_txt(url, genre, 13, 40)
-
-
-if __name__ == '__main__':
-    main()

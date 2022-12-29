@@ -1,4 +1,3 @@
-import traceback
 from urllib.parse import urljoin
 
 import requests
@@ -41,6 +40,7 @@ def parse_book_page(url, book_id) -> dict:
         'txt_book_link': txt_book_link,
         'image_link': img_link,
         'book_title': parsed_title.text.split('::')[0].strip(),
+        'author': parsed_title.text.split('::')[1].strip(),
         'comments': parsed_comments,
         'genres': parsed_genres
     }
@@ -49,14 +49,3 @@ def parse_book_page(url, book_id) -> dict:
 def check_for_redirect(response):
     if not response.history:
         raise RedirectedPage from None
-
-
-# url = 'https://tululu.org'
-# for i in range(10, 40):
-#     try:
-#         a = parse_book_page(url, i)['txt_book_link']
-#         print(a)
-#     except LinkNotFoundError:
-#         continue
-#     except RedirectedPage:
-#         continue
