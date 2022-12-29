@@ -8,7 +8,7 @@ def main():
     parser.add_argument('start_id', type=int, help='Enter start id')
     parser.add_argument('end_id', type=int, help='Enter final id')
     args = parser.parse_args()
-    genre = 'Научная фантастика'
+    genre = 'Здоровье'
     url = 'https://tululu.org'
     download_book_comments(url, genre, args.start_id, args.end_id)
     download_book_image(url, genre, args.start_id, args.end_id)

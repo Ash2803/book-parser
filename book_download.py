@@ -6,13 +6,15 @@ import requests
 from pathvalidate import sanitize_filename
 
 from parse import parse_book_page, LinkNotFoundError, RedirectedPage
+from tqdm import tqdm, trange
+from time import sleep
 
 
 def download_book_comments(url: str, genre: str, start_id: int, end_id: int):
     """ Download books comments """
     images_dir_path = Path('comments')
     images_dir_path.mkdir(parents=True, exist_ok=True)
-    for book_id in range(start_id, end_id):
+    for book_id in trange(start_id, end_id, desc='Books comments', ncols=90):
         try:
             book = parse_book_page(url, book_id)
             if genre in book['genres']:
@@ -32,7 +34,8 @@ def download_book_image(url: str, genre: str, start_id: int, end_id: int):
     """ Download books images """
     images_dir_path = Path('images')
     images_dir_path.mkdir(parents=True, exist_ok=True)
-    for book_id in range(start_id, end_id):
+    for book_id in trange(start_id, end_id, desc='Books images', ncols=90):
+        sleep(.1)
         try:
             book_page = parse_book_page(url, book_id)
             if genre in book_page['genres']:
@@ -56,7 +59,7 @@ def download_book_txt(url: str, genre: str, start_id: int, end_id: int):
     """ Download books in txt format"""
     book_dir_path = Path('books')
     book_dir_path.mkdir(parents=True, exist_ok=True)
-    for book_id in range(start_id, end_id):
+    for book_id in trange(start_id, end_id, desc='Books', ncols=90):
         try:
             book_page = parse_book_page(url, book_id)
             if genre in book_page['genres']:
