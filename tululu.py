@@ -5,8 +5,8 @@ from book_download import download_book_txt, download_book_image, download_book_
 
 def main():
     parser = argparse.ArgumentParser(description='Download books')
-    parser.add_argument('start_id', type=int, help='Enter start id')
-    parser.add_argument('end_id', type=int, help='Enter final id')
+    parser.add_argument('--start_id', type=int, help='Enter start id', default=600)
+    parser.add_argument('--end_id', type=int, help='Enter final id', default=640)
     args = parser.parse_args()
     genre = 'Здоровье'
     url = 'https://tululu.org'
