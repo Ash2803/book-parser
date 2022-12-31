@@ -1,5 +1,6 @@
 import argparse
 import logging
+import sys
 import time
 
 import requests
@@ -22,12 +23,13 @@ def main():
             try:
                 book_page = get_book_page(url, book_id)
                 check_for_redirect(book_page)
-                parsed_book_page = parse_book_page(book_page)
-            except RedirectedPage:
-                logging.error('URL has been redirected')
+            except requests.exceptions.HTTPError:
+                logging.exception('URL had been redirected')
                 continue
+            try:
+                parsed_book_page = parse_book_page(book_page)
             except TypeError:
-                logging.error('There is no available book to download')
+                logging.exception('There is no available book to download')
                 continue
             if genre in parsed_book_page['genres']:
                 download_book_comments(parsed_book_page, genre, book_id)
@@ -37,9 +39,9 @@ def main():
                       f'Автор: {parsed_book_page["author"]}\n'
                       f'Жанр: {parsed_book_page["genres"]}')
         except requests.exceptions.ConnectionError:
-            logging.error('Connection lost')
+            logging.exception('Connection lost')
         except requests.exceptions.HTTPError:
-            logging.error('Invalid url')
+            logging.exception('Invalid url')
 
 
 if __name__ == '__main__':

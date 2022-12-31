@@ -11,7 +11,6 @@ class RedirectedPage(Exception):
 def get_book_page(url, book_id):
     response = requests.get(f'{url}/b{book_id}')
     response.raise_for_status()
-    check_for_redirect(response)
     return response
 
 
@@ -39,5 +38,11 @@ def parse_book_page(response) -> dict:
 
 
 def check_for_redirect(response):
-    if not response.history:
-        raise RedirectedPage from None
+    redirects = response.history
+    for redirect in redirects:
+        if redirect.status_code == 302:
+            raise requests.exceptions.HTTPError
+
+# url = 'https://tululu.org/'
+# a = get_book_page(url, 34512)
+# print(parse_book_page(a))
