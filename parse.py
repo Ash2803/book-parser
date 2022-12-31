@@ -1,4 +1,4 @@
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -12,23 +12,31 @@ class RedirectedPage(Exception):
     pass
 
 
-def parse_book_page(url, book_id) -> dict:
-    response = requests.get(f'{url}/b{book_id}')
-    response.raise_for_status()
+def get_book_page(url, book_id):
     try:
+        response = requests.get(f'{url}/b{book_id}')
+        response.raise_for_status()
         check_for_redirect(response)
+        return response
     except RedirectedPage:
         raise RedirectedPage from None
+
+
+def parse_book_page(response) -> dict:
     try:
         soup = BeautifulSoup(response.text, 'lxml')
-        parsed_txt_book = soup.find('a', text='скачать txt')['href']
+        relative_book_path = soup.find('a', text='скачать txt')['href']
     except TypeError:
         raise LinkNotFoundError from None
-    txt_book_link = urljoin(url, parsed_txt_book)
+
+    page_url_parse = urlparse(response.url)
+    page_base_url = page_url_parse._replace(path='').geturl()
+    txt_book_link = urljoin(page_base_url, relative_book_path)
+
     genres = soup.find('span', class_='d_book').find_all('a')
     parsed_title = soup.find('div', id='content').find('h1')
     parsed_img = soup.find('table').find('div', class_='bookimage').find('img')['src']
-    img_link = urljoin(url, parsed_img)
+    img_link = urljoin(page_base_url, parsed_img)
     comments = soup.find_all(class_='texts')
     parsed_comments = []
     parsed_genres = []
@@ -49,3 +57,17 @@ def parse_book_page(url, book_id) -> dict:
 def check_for_redirect(response):
     if not response.history:
         raise RedirectedPage from None
+
+
+a = 'https://tululu.org'
+print(parse_book_page(get_book_page(a, 4))['image_link'])
+# o = urlparse(a)
+# base_url = o._replace(path='').geturl()
+# # new_url = urljoin(base_url, f)
+# print(base_url)
+
+# split_domain = urllib.parse.unquote(split_url[1])
+# print(urljoin(split_url.scheme, split_url.netloc, f))
+# print(split_domain)
+# file_format = os.path.splitext(split_domain)
+# print(file_format[1])
