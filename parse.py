@@ -53,17 +53,3 @@ def parse_book_page(response) -> dict:
 def check_for_redirect(response):
     if not response.history:
         raise RedirectedPage from None
-
-
-a = 'https://tululu.org'
-print(parse_book_page(get_book_page(a, 4))['genres'])
-# o = urlparse(a)
-# base_url = o._replace(path='').geturl()
-# # new_url = urljoin(base_url, f)
-# print(base_url)
-
-# split_domain = urllib.parse.unquote(split_url[1])
-# print(urljoin(split_url.scheme, split_url.netloc, f))
-# print(split_domain)
-# file_format = os.path.splitext(split_domain)
-# print(file_format[1])

@@ -1,6 +1,7 @@
 import argparse
 
 from book_download import download_book_txt, download_book_image, download_book_comments
+from parse import get_book_page, parse_book_page
 
 
 def main():
@@ -8,11 +9,14 @@ def main():
     parser.add_argument('--start_id', type=int, help='Enter start id', default=600)
     parser.add_argument('--end_id', type=int, help='Enter final id', default=640)
     args = parser.parse_args()
-    genre = 'Здоровье'
+    genre = 'Деловая литература'
     url = 'https://tululu.org'
-    download_book_comments(url, genre, args.start_id, args.end_id)
-    download_book_image(url, genre, args.start_id, args.end_id)
-    download_book_txt(url, genre, args.start_id, args.end_id)
+    for book_id in range(args.start_id, args.end_id):
+        book_page = get_book_page(url, book_id)
+        parsed_book_page = parse_book_page(book_page)
+        download_book_comments(parsed_book_page, genre, book_id)
+        download_book_image(parsed_book_page, genre, book_id)
+        download_book_txt(parsed_book_page, genre, book_id)
 
 
 if __name__ == '__main__':
