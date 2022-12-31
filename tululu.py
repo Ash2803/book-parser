@@ -20,9 +20,10 @@ def main():
             continue
         except TypeError:
             continue
-        download_book_comments(parsed_book_page, genre, book_id)
-        download_book_image(parsed_book_page, genre, book_id)
-        download_book_txt(parsed_book_page, genre, book_id)
+        if genre in parsed_book_page['genres']:
+            download_book_comments(parsed_book_page, genre, book_id)
+            download_book_image(parsed_book_page, genre, book_id)
+            download_book_txt(parsed_book_page, genre, book_id)
 
 
 if __name__ == '__main__':
