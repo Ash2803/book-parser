@@ -38,12 +38,8 @@ def parse_book_page(response) -> dict:
     parsed_img = soup.find('table').find('div', class_='bookimage').find('img')['src']
     img_link = urljoin(page_base_url, parsed_img)
     comments = soup.find_all(class_='texts')
-    parsed_comments = []
-    parsed_genres = []
-    for genre in genres:
-        parsed_genres.append(genre.text)
-    for comment in comments:
-        parsed_comments.append(comment.find(class_='black').text)
+    parsed_comments = [comment.find(class_='black').text for comment in comments]
+    parsed_genres = [genre.text for genre in genres]
     return {
         'txt_book_link': txt_book_link,
         'image_link': img_link,
@@ -60,7 +56,7 @@ def check_for_redirect(response):
 
 
 a = 'https://tululu.org'
-print(parse_book_page(get_book_page(a, 4))['image_link'])
+print(parse_book_page(get_book_page(a, 4))['genres'])
 # o = urlparse(a)
 # base_url = o._replace(path='').geturl()
 # # new_url = urljoin(base_url, f)
