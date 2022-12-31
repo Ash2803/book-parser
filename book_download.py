@@ -44,6 +44,3 @@ def download_book_txt(parsed_book: dict, genre, book_id):
     parsed_book_name = f'{sanitize_filename(parsed_book["book_title"])}.txt'
     with open(book_dir_path / f'{book_id}. {parsed_book_name}', 'wb') as file:
         file.write(response.content)
-    print(f'Название: {parsed_book["book_title"]}\n'
-          f'Автор: {parsed_book["author"]}\n'
-          f'Жанр: {parsed_book["genres"]}')

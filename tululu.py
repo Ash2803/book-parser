@@ -24,6 +24,9 @@ def main():
             download_book_comments(parsed_book_page, genre, book_id)
             download_book_image(parsed_book_page, genre, book_id)
             download_book_txt(parsed_book_page, genre, book_id)
+            print(f'Название: {parsed_book_page["book_title"]}\n'
+                  f'Автор: {parsed_book_page["author"]}\n'
+                  f'Жанр: {parsed_book_page["genres"]}')
 
 
 if __name__ == '__main__':
