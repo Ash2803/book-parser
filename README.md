@@ -1,33 +1,32 @@
-Made by [@Ash2803](https://github.com/Ash2803)  
+# Book scraper:
+Scraper script to download books, images and comments from tululu.ru.
 
-# Что делает:
-Скрипт парсит и скачивает книжки со всеми данными с он-лайн библиотеки.
+### How to execute:
 
-## Как запустить:
-
-- Скачайте код;
-- Создайте виртуальное окружение:
+- Download or clone [repo](https://github.com/Ash2803/book-parser)
+- You must have Python 3.6 or higher already installed;
+- Create the virtual environment using command:
 ```
 python3 -m venv venv
 ```
-- Установите зависимости:
+- Install the requirements using command:
 ```
 pip install -r requirements.txt
 ``` 
-В скрипте существуют 2 переменные: `start_id` - определяет стартовый ID,
-с которого начнется поиск и скачивание книжек и `end_id` - определяет конечный ID,
-до которого будет происходить поиск и скачивание книжек. По-умолчанию установлены
-значения от 600 до 640
+### Scraping book
+There are 2 variables in `tululu.py`: `start_id` - specify the starting book ID,
+from which you will start scraping and downloading books and `end_id` - which specify final ID,
+where the scraping ends. Default values is `start_id=600` and `end_id=640`.
 - Запуск скрипта:
 ```
-python tululu.py 20 30
+python tululu.py --start_id 5 --end_id 30
 ```
-По умолчанию в `tululu.py` задан жанр "Научная фантастика".
+You can specify genre of book  `tululu.py`. Default value is "Научная фантастика".
 ```python
 genre = 'Научная фантастика'
 ```
-Можете изменить на нужный вам жанр из существующих на [сайте](https://tululu.org).
+The list of genres is available on the [website](https://tululu.org).
 
-## Цели проекта
+### Project Goals
 
-Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org).
+The code is written for educational purposes at online-course for web-developers [dvmn.org](https://dvmn.org/)
