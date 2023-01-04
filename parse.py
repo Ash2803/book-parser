@@ -42,7 +42,3 @@ def check_for_redirect(response):
     for redirect in redirects:
         if redirect.status_code == 302:
             raise requests.exceptions.HTTPError
-
-# url = 'https://tululu.org/'
-# a = get_book_page(url, 34512)
-# print(parse_book_page(a))
