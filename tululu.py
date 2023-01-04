@@ -1,12 +1,11 @@
 import argparse
 import logging
-import sys
 import time
 
 import requests
 
 from book_download import download_book_txt, download_book_image, download_book_comments
-from parse import get_book_page, parse_book_page, check_for_redirect, RedirectedPage
+from parse import get_book_page, parse_book_page, check_for_redirect
 
 
 def main():
@@ -19,7 +18,6 @@ def main():
     logging.basicConfig(format="%(lineno)d %(funcName)s %(filename)s %(levelname)s %(message)s")
     for book_id in range(args.start_id, args.end_id):
         try:
-            time.sleep(5)
             try:
                 book_page = get_book_page(url, book_id)
                 check_for_redirect(book_page)
@@ -40,6 +38,7 @@ def main():
                       f'Жанр: {parsed_book_page["genres"]}')
         except requests.exceptions.ConnectionError:
             logging.exception('Connection lost')
+            time.sleep(10)
         except requests.exceptions.HTTPError:
             logging.exception('Invalid url')
 
