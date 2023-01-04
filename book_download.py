@@ -6,7 +6,7 @@ import requests
 from pathvalidate import sanitize_filename
 
 
-def download_book_comments(parsed_book: dict, genre: str, book_id: int):
+def download_book_comments(parsed_book: dict, book_id: int):
     """ Download books comments """
     images_dir_path = Path('comments')
     images_dir_path.mkdir(parents=True, exist_ok=True)
@@ -18,7 +18,7 @@ def download_book_comments(parsed_book: dict, genre: str, book_id: int):
                 file.write(f'{comment}\n')
 
 
-def download_book_image(parsed_book: dict, genre: str, book_id: int):
+def download_book_image(parsed_book: dict, book_id: int):
     """ Download books images """
     images_dir_path = Path('images')
     images_dir_path.mkdir(parents=True, exist_ok=True)
@@ -34,7 +34,7 @@ def download_book_image(parsed_book: dict, genre: str, book_id: int):
             file.write(response.content)
 
 
-def download_book_txt(parsed_book: dict, genre, book_id):
+def download_book_txt(parsed_book: dict, book_id: int):
     """ Download books in txt format"""
     book_dir_path = Path('books')
     book_dir_path.mkdir(parents=True, exist_ok=True)
