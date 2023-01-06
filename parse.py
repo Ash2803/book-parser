@@ -9,7 +9,7 @@ class RedirectedPage(Exception):
 
 
 def get_book_page(url, book_id):
-    response = requests.get(f'{url}/b{book_id}/')
+    response = requests.get(f'{url}')
     response.raise_for_status()
     return response
 
@@ -40,3 +40,6 @@ def parse_book_page(response) -> dict:
 def check_for_redirect(response):
     if response.history:
         raise RedirectedPage
+
+# url = 'https://tululu.org'
+# parse_book_page(get_book_page(url,6))

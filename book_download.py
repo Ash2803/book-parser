@@ -32,6 +32,7 @@ def download_book_image(parsed_book: dict, book_id: int):
         parsed_book_name = f'{sanitize_filename(parsed_book["book_title"])}.jpg'
         with open(images_dir_path / f'{book_id}. {parsed_book_name}', 'wb') as file:
             file.write(response.content)
+        return os.path.join(images_dir_path, parsed_book_name)
 
 
 def download_book_txt(parsed_book: dict, book_id: int):
@@ -44,3 +45,4 @@ def download_book_txt(parsed_book: dict, book_id: int):
     parsed_book_name = f'{sanitize_filename(parsed_book["book_title"])}.txt'
     with open(book_dir_path / f'{book_id}. {parsed_book_name}', 'wb') as file:
         file.write(response.content)
+        return os.path.join(book_dir_path, parsed_book_name)
