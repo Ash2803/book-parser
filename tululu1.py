@@ -18,7 +18,7 @@ def main():
         books = []
         for index, book_link in enumerate(books_links, 1):
             try:
-                book_page = get_book_page(book_link, page)
+                book_page = get_book_page(book_link)
                 check_for_redirect(book_page)
                 parsed_book_page = parse_book_page(book_page)
                 download_book_comments(parsed_book_page, index)

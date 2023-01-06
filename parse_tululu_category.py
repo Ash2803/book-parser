@@ -1,13 +1,9 @@
-from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
-from pathvalidate import sanitize_filename
 
-
-class RedirectedPage(Exception):
-    pass
+from parse import RedirectedPage
 
 
 def get_collection(url):
@@ -18,18 +14,13 @@ def get_collection(url):
 
 def parse_category(response) -> list:
     soup = BeautifulSoup(response.text, 'lxml')
-    relative_book_path = soup.find_all(['table', 'div'], class_='bookimage')
+    relative_book_path = soup.select('table .bookimage a')
     page_url_parse = urlparse(response.url)
     page_base_url = page_url_parse._replace(path='').geturl()
-    books_links = []
-    for book_id in relative_book_path:
-        book_link = urljoin(page_base_url, book_id.find('a')['href'])
-        books_links.append(book_link)
+    books_links = [urljoin(page_base_url, book_id['href']) for book_id in relative_book_path]
     return books_links
 
 
 def check_for_redirect(response):
     if response.history:
         raise RedirectedPage
-
-
