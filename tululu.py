@@ -1,5 +1,4 @@
 import argparse
-import itertools
 import json
 import logging
 import time
@@ -13,19 +12,10 @@ from parse_tululu_book import get_book_page, parse_book_page, check_for_redirect
 from parse_tululu_category import parse_category, get_collection
 
 
-def loop_range(start, end=None):
-    index = start
-    while True:
-        yield index
-        index += 1
-        if end is not None and index == end:
-            return
-
-
 def main():
     parser = argparse.ArgumentParser(description='Download books')
-    parser.add_argument('--start_page', type=int, help='Enter starting page number', )
-    parser.add_argument('--end_page', type=int, help='Enter final page number')
+    parser.add_argument('--start_page', default=0, type=int, help='Enter starting page number', )
+    parser.add_argument('--end_page', default=999, type=int, help='Enter final page number')
     parser.add_argument('--dest_folder', type=str, default='Books', help='Enter catalogue path name')
     parser.add_argument('--skip_imgs', action='store_false', help='Default value is True')
     parser.add_argument('--skip_txt', action='store_false', help='Default value is True')
@@ -33,10 +23,13 @@ def main():
     args = parser.parse_args()
     logging.basicConfig(format="%(lineno)d %(funcName)s %(filename)s %(levelname)s %(message)s")
 
-    for page in loop_range(args.start_page, args.end_page):
+    for page in range(args.start_page, args.end_page):
         url = f'https://tululu.org/l55/{page}/'
-        collection = get_collection(url)
-        books_links = parse_category(collection)
+        collection_page = get_collection(url)
+        if collection_page.history:
+            logging.error('No pages left')
+            break
+        books_links = parse_category(collection_page)
         books = []
         for index, book_link in enumerate(books_links, 1):
             try:
@@ -45,9 +38,9 @@ def main():
                 parsed_book_page = parse_book_page(book_page)
                 download_book_comments(parsed_book_page, index, args.dest_folder)
                 print(dedent(f'''\
-                Title: {parsed_book_page["book_title"]}
-                Author: {parsed_book_page["author"]}
-                Genres: {parsed_book_page["genres"]}'''))
+                    Title: {parsed_book_page["book_title"]}
+                    Author: {parsed_book_page["author"]}
+                    Genres: {parsed_book_page["genres"]}'''))
                 books.append({
                     'Title': parsed_book_page["book_title"],
                     'Author': parsed_book_page["author"],
