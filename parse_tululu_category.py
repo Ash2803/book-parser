@@ -3,7 +3,7 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-from parse import RedirectedPage
+from parse_tululu_book import RedirectedPage
 
 
 def get_collection(url):
