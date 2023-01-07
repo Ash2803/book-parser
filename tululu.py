@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import time
+import traceback
 from pathlib import Path
 from textwrap import dedent
 
@@ -25,8 +26,10 @@ def main():
     for page_number in range(args.start_page, args.end_page):
         url = f'https://tululu.org/l55/{page_number}/'
         collection_page = get_page(url)
-        if collection_page.history:
-            logging.error('No pages left')
+        try:
+            check_for_redirect(collection_page)
+        except RedirectedPage:
+            logging.exception('Redirected page')
             break
         books_links = parse_category(collection_page)
         books = []
