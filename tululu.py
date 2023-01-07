@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--json_path', type=str, help='Enter json file path name', default='Books')
     args = parser.parse_args()
     logging.basicConfig(format="%(lineno)d %(funcName)s %(filename)s %(levelname)s %(message)s")
-
+    books = []
     for page_number in range(args.start_page, args.end_page):
         try:
             url = f'https://tululu.org/l55/{page_number}/'
@@ -32,7 +32,6 @@ def main():
                 logging.exception('Redirected page')
                 break
             books_links = parse_category(collection_page)
-            books = []
             for book_num, book_link in enumerate(books_links, 1):
                 book_page = get_page(book_link)
                 check_for_redirect(book_page)
@@ -62,10 +61,10 @@ def main():
                     'Genres': book_genres,
                     'Comments': book_comments
                 })
-                json_dir_name = Path(args.json_path)
-                json_dir_name.mkdir(parents=True, exist_ok=True)
-                with open(json_dir_name / 'books.json', "w") as my_file:
-                    json.dump(books, my_file, indent=4, ensure_ascii=False)
+            json_dir_name = Path(args.json_path)
+            json_dir_name.mkdir(parents=True, exist_ok=True)
+            with open(json_dir_name / 'books.json', "w") as file:
+                json.dump(books, file, indent=4, ensure_ascii=False)
         except requests.exceptions.ConnectionError:
             logging.exception('Connection lost')
             time.sleep(10)
