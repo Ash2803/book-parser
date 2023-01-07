@@ -1,9 +1,12 @@
+import logging
 import os
 import urllib.parse
 from pathlib import Path
 
 import requests
 from pathvalidate import sanitize_filename
+
+from parse import check_for_redirect, RedirectedPage
 
 
 def download_book_comments(book_comments, book_title, book_num: int, dest_folder: str):
@@ -45,10 +48,15 @@ def download_book_txt(txt_book_link, book_title, book_num: int, dest_folder: str
     catalogue_path.mkdir(parents=True, exist_ok=True)
     book_dir_path = Path(catalogue_path, 'books')
     book_dir_path.mkdir(parents=True, exist_ok=True)
-    response = requests.get(txt_book_link)
-    response.raise_for_status()
-    parsed_book_name = f'{sanitize_filename(book_title)}.txt'
-    book_path = os.path.join(book_dir_path, parsed_book_name)
-    with open(book_dir_path / f'{book_num}. {parsed_book_name}', 'wb') as file:
-        file.write(response.content)
-    return book_path
+    try:
+        response = requests.get(txt_book_link)
+        response.raise_for_status()
+        check_for_redirect(response)
+        parsed_book_name = f'{sanitize_filename(book_title)}.txt'
+        book_path = os.path.join(book_dir_path, parsed_book_name)
+        with open(book_dir_path / f'{book_num}. {parsed_book_name}', 'wb') as file:
+            file.write(response.content)
+        return book_path
+    except RedirectedPage:
+        logging.exception('Redirected page')
+
