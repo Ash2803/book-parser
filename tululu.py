@@ -33,22 +33,30 @@ def main():
                 break
             books_links = parse_category(collection_page)
             books = []
-            for index, book_link in enumerate(books_links, 1):
+            for book_num, book_link in enumerate(books_links, 1):
                 book_page = get_page(book_link)
                 check_for_redirect(book_page)
                 parsed_book_page = parse_book_page(book_page)
-                download_book_comments(parsed_book_page, index, args.dest_folder)
+                book_title = parsed_book_page["book_title"]
+                book_author = parsed_book_page["author"]
+                book_genres = parsed_book_page["genres"]
+                book_comments = parsed_book_page["comments"]
+                txt_book_link = parsed_book_page["txt_book_link"]
+                book_image_link = parsed_book_page["image_link"]
+                download_book_comments(book_comments, book_title, book_num, args.dest_folder)
                 print(dedent(f'''\
-                    Title: {parsed_book_page["book_title"]}
-                    Author: {parsed_book_page["author"]}
-                    Genres: {parsed_book_page["genres"]}'''))
+                    Title: {book_title}
+                    Author: {book_author}
+                    Genres: {book_genres}'''))
                 books.append({
-                    'Title': parsed_book_page["book_title"],
-                    'Author': parsed_book_page["author"],
-                    'Image': download_book_image(parsed_book_page, index, args.dest_folder, args.skip_imgs),
-                    'Book path': download_book_txt(parsed_book_page, index, args.dest_folder, args.skip_txt),
-                    'Genres': parsed_book_page["genres"],
-                    'Comments': parsed_book_page['comments']
+                    'Title': book_title,
+                    'Author': book_author,
+                    'Image': download_book_image(book_image_link, book_title, book_num, args.dest_folder,
+                                                 args.skip_imgs),
+                    'Book path': download_book_txt(txt_book_link, book_title, book_num, args.dest_folder,
+                                                   args.skip_txt),
+                    'Genres': book_genres,
+                    'Comments': book_comments
                 })
                 json_dir_name = Path(args.json_path)
                 json_dir_name.mkdir(parents=True, exist_ok=True)
