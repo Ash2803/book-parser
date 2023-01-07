@@ -22,7 +22,7 @@ def download_book_comments(parsed_book: dict, book_id: int, dest_folder: str):
 
 def download_book_image(parsed_book: dict, book_id: int, dest_folder: str, skip_imgs: bool):
     """ Download books images """
-    if skip_imgs:
+    if not skip_imgs:
         catalogue_path = Path(dest_folder)
         catalogue_path.mkdir(parents=True, exist_ok=True)
         images_dir_path = Path(catalogue_path, 'images')
@@ -42,7 +42,7 @@ def download_book_image(parsed_book: dict, book_id: int, dest_folder: str, skip_
 
 def download_book_txt(parsed_book: dict, book_id: int, dest_folder: str, skip_txt: bool):
     """ Download books in txt format"""
-    if skip_txt:
+    if not skip_txt:
         catalogue_path = Path(dest_folder)
         catalogue_path.mkdir(parents=True, exist_ok=True)
         book_dir_path = Path(catalogue_path, 'books')

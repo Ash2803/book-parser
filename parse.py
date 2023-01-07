@@ -8,7 +8,7 @@ class RedirectedPage(Exception):
     pass
 
 
-def get_book_page(url):
+def get_page(url):
     response = requests.get(f'{url}')
     response.raise_for_status()
     return response
@@ -35,6 +35,15 @@ def parse_book_page(response) -> dict:
         'comments': parsed_comments,
         'genres': parsed_genres
     }
+
+
+def parse_category(response) -> list:
+    soup = BeautifulSoup(response.text, 'lxml')
+    relative_book_path = soup.select('table .bookimage a')
+    page_url_parse = urlparse(response.url)
+    page_base_url = page_url_parse._replace(path='').geturl()
+    books_links = [urljoin(page_base_url, book_id['href']) for book_id in relative_book_path]
+    return books_links
 
 
 def check_for_redirect(response):

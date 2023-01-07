@@ -8,8 +8,7 @@ from textwrap import dedent
 import requests
 
 from book_download import download_book_txt, download_book_image, download_book_comments
-from parse_tululu_book import get_book_page, parse_book_page, check_for_redirect, RedirectedPage
-from parse_tululu_category import parse_category, get_collection
+from parse import get_page, parse_book_page, check_for_redirect, RedirectedPage, parse_category
 
 
 def main():
@@ -25,7 +24,7 @@ def main():
 
     for page_number in range(args.start_page, args.end_page):
         url = f'https://tululu.org/l55/{page_number}/'
-        collection_page = get_collection(url)
+        collection_page = get_page(url)
         if collection_page.history:
             logging.error('No pages left')
             break
@@ -33,7 +32,7 @@ def main():
         books = []
         for index, book_link in enumerate(books_links, 1):
             try:
-                book_page = get_book_page(book_link)
+                book_page = get_page(book_link)
                 check_for_redirect(book_page)
                 parsed_book_page = parse_book_page(book_page)
                 download_book_comments(parsed_book_page, index, args.dest_folder)
