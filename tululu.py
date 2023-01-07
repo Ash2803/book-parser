@@ -23,8 +23,8 @@ def main():
     args = parser.parse_args()
     logging.basicConfig(format="%(lineno)d %(funcName)s %(filename)s %(levelname)s %(message)s")
 
-    for page in range(args.start_page, args.end_page):
-        url = f'https://tululu.org/l55/{page}/'
+    for page_number in range(args.start_page, args.end_page):
+        url = f'https://tululu.org/l55/{page_number}/'
         collection_page = get_collection(url)
         if collection_page.history:
             logging.error('No pages left')
