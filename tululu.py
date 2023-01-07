@@ -43,6 +43,12 @@ def main():
                 book_comments = parsed_book_page["comments"]
                 txt_book_link = parsed_book_page["txt_book_link"]
                 book_image_link = parsed_book_page["image_link"]
+                book_image_path = ''
+                if not args.skip_imgs:
+                    book_image_path = download_book_image(book_image_link, book_title, book_num, args.dest_folder)
+                txt_book_path = ''
+                if not args.skip_txt:
+                    txt_book_path = download_book_txt(txt_book_link, book_title, book_num, args.dest_folder)
                 download_book_comments(book_comments, book_title, book_num, args.dest_folder)
                 print(dedent(f'''\
                     Title: {book_title}
@@ -51,10 +57,8 @@ def main():
                 books.append({
                     'Title': book_title,
                     'Author': book_author,
-                    'Image': download_book_image(book_image_link, book_title, book_num, args.dest_folder,
-                                                 args.skip_imgs),
-                    'Book path': download_book_txt(txt_book_link, book_title, book_num, args.dest_folder,
-                                                   args.skip_txt),
+                    'Image': book_image_path,
+                    'Book path': txt_book_path,
                     'Genres': book_genres,
                     'Comments': book_comments
                 })
