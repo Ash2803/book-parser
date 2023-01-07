@@ -2,7 +2,6 @@ import argparse
 import json
 import logging
 import time
-import traceback
 from pathlib import Path
 from textwrap import dedent
 
@@ -24,17 +23,17 @@ def main():
     logging.basicConfig(format="%(lineno)d %(funcName)s %(filename)s %(levelname)s %(message)s")
 
     for page_number in range(args.start_page, args.end_page):
-        url = f'https://tululu.org/l55/{page_number}/'
-        collection_page = get_page(url)
         try:
-            check_for_redirect(collection_page)
-        except RedirectedPage:
-            logging.exception('Redirected page')
-            break
-        books_links = parse_category(collection_page)
-        books = []
-        for index, book_link in enumerate(books_links, 1):
+            url = f'https://tululu.org/l55/{page_number}/'
+            collection_page = get_page(url)
             try:
+                check_for_redirect(collection_page)
+            except RedirectedPage:
+                logging.exception('Redirected page')
+                break
+            books_links = parse_category(collection_page)
+            books = []
+            for index, book_link in enumerate(books_links, 1):
                 book_page = get_page(book_link)
                 check_for_redirect(book_page)
                 parsed_book_page = parse_book_page(book_page)
@@ -55,17 +54,17 @@ def main():
                 json_dir_name.mkdir(parents=True, exist_ok=True)
                 with open(json_dir_name / 'books.json', "w") as my_file:
                     json.dump(books, my_file, indent=4, ensure_ascii=False)
-            except requests.exceptions.ConnectionError:
-                logging.exception('Connection lost')
-                time.sleep(10)
-            except requests.exceptions.HTTPError:
-                logging.exception('Invalid url')
-            except TypeError:
-                logging.exception('There is no available book to download')
-                continue
-            except RedirectedPage:
-                logging.exception('URL had been redirected')
-                continue
+        except requests.exceptions.ConnectionError:
+            logging.exception('Connection lost')
+            time.sleep(10)
+        except requests.exceptions.HTTPError:
+            logging.exception('Invalid url')
+        except TypeError:
+            logging.exception('There is no available book to download')
+            continue
+        except RedirectedPage:
+            logging.exception('URL had been redirected')
+            continue
 
 
 if __name__ == '__main__':
