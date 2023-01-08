@@ -31,37 +31,47 @@ def main():
             check_for_redirect(collection_page)
             books_links = parse_collection_page(collection_page)
             for book_num, book_link in enumerate(books_links, 1):
-                book_page = get_page(book_link)
-                check_for_redirect(book_page)
-                parsed_book_page = parse_book_page(book_page)
-                book_title = parsed_book_page["book_title"]
-                book_author = parsed_book_page["author"]
-                book_genres = parsed_book_page["genres"]
-                book_comments = parsed_book_page["comments"]
-                txt_book_link = parsed_book_page["txt_book_link"]
-                book_image_link = parsed_book_page["image_link"]
-                book_image_path = ''
-                if not args.skip_imgs:
-                    book_image_path = download_book_image(book_image_link, book_title, book_num, args.dest_folder)
-                txt_book_path = ''
                 try:
+                    book_page = get_page(book_link)
+                    check_for_redirect(book_page)
+                    parsed_book_page = parse_book_page(book_page)
+                    book_title = parsed_book_page["book_title"]
+                    book_author = parsed_book_page["author"]
+                    book_genres = parsed_book_page["genres"]
+                    book_comments = parsed_book_page["comments"]
+                    txt_book_link = parsed_book_page["txt_book_link"]
+                    book_image_link = parsed_book_page["image_link"]
+                    book_image_path = ''
+                    if not args.skip_imgs:
+                        book_image_path = download_book_image(book_image_link, book_title, book_num, args.dest_folder)
+                    txt_book_path = ''
                     if not args.skip_txt:
                         txt_book_path = download_book_txt(txt_book_link, book_title, book_num, args.dest_folder)
+                        check_for_redirect(txt_book_path)
+                    download_book_comments(book_comments, book_title, book_num, args.dest_folder)
+                    print(dedent(f'''\
+                        Title: {book_title}
+                        Author: {book_author}
+                        Genres: {book_genres}'''))
+                    books.append({
+                        'Title': book_title,
+                        'Author': book_author,
+                        'Image': book_image_path,
+                        'Book path': txt_book_path,
+                        'Genres': book_genres,
+                        'Comments': book_comments
+                    })
+                except requests.exceptions.ConnectionError:
+                    logging.exception('Connection lost')
+                    time.sleep(10)
+                except requests.exceptions.HTTPError:
+                    logging.exception('Invalid url')
+                except TypeError:
+                    logging.exception('There is no available book to download')
+                    continue
                 except RedirectedPage:
-                    logging.exception('Redirected page')
-                download_book_comments(book_comments, book_title, book_num, args.dest_folder)
-                print(dedent(f'''\
-                    Title: {book_title}
-                    Author: {book_author}
-                    Genres: {book_genres}'''))
-                books.append({
-                    'Title': book_title,
-                    'Author': book_author,
-                    'Image': book_image_path,
-                    'Book path': txt_book_path,
-                    'Genres': book_genres,
-                    'Comments': book_comments
-                })
+                    logging.exception('URL had been redirected')
+                    continue
         except requests.exceptions.ConnectionError:
             logging.exception('Connection lost')
             time.sleep(10)
