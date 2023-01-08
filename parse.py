@@ -37,13 +37,20 @@ def parse_book_page(response) -> dict:
     }
 
 
-def parse_category(response) -> list:
+def parse_collection_page(response) -> list:
+    """Returns books links"""
     soup = BeautifulSoup(response.text, 'lxml')
     relative_book_path = soup.select('table .bookimage a')
     page_url_parse = urlparse(response.url)
     page_base_url = page_url_parse._replace(path='').geturl()
     books_links = [urljoin(page_base_url, book_id['href']) for book_id in relative_book_path]
     return books_links
+
+
+def get_collection_last_page_number(response):
+    soup = BeautifulSoup(response.text, 'lxml')
+    count_of_pages = soup.select_one('.center .npage:nth-child(7)').text
+    return int(count_of_pages)
 
 
 def check_for_redirect(response):
