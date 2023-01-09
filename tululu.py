@@ -51,15 +51,12 @@ def main():
                         )
                     txt_book_path = ''
                     if not args.skip_txt:
-                        txt_book = download_book_txt(
+                        txt_book_path = download_book_txt(
                             txt_book_link,
                             book_title,
                             book_num,
                             args.dest_folder
                         )
-                        txt_book_response = txt_book['response']
-                        check_for_redirect(txt_book_response)
-                        txt_book_path = txt_book['book_path']
                     download_book_comments(book_comments, book_title, book_num, args.dest_folder)
                     print(dedent(f'''\
                         Title: {book_title}
